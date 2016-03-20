@@ -4,7 +4,7 @@ var Schema  = mongoose.Schema;
 var BooksSchema = new Schema ({
 
 		bookname: String,
-		bookkeeper: Number,
+		bookkeeper: String,
 		writter: [String],
 		image: String
 
