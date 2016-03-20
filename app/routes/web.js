@@ -9,12 +9,15 @@ module.exports = function (app, express) {
 	web.get('/',function (req,res){
 
 			if (req.session.userId == undefined) {
+			
 				res.redirect('/login');
+			
+			} else {
+
+				var title = 'Dashboard';
+				res.render('index.ejs',{ title: title });
+				
 			}
-
-			var title = 'Dashboard';
-
-			res.render('index.ejs',{ title: title });
 
 	});
 
@@ -22,9 +25,17 @@ module.exports = function (app, express) {
 
 	   .get(function( req,res ){
 
-		var title = 'Login';
-		error 	  = [];
-		res.render('login.ejs',{ title : title , error: error });
+	   		if (req.session.userId == undefined) {
+
+					var title = 'Login';
+					error 	  = [];
+					res.render('login.ejs',{ title : title , error: error });
+	   		
+	   		} else {
+
+	   			res.redirect('/');
+	   		
+	   		}
 
 		})
 
@@ -49,42 +60,60 @@ module.exports = function (app, express) {
 
 			if ( error.length < 1 ) {
 
-					Users.count({ username:username },function(err,count){
+				Users.count({ username:username },function(err,count){
 
-							if (count == 0){
+					if (count == 0){
 
-								error.push('Username is not executed!');
+						error.push('Username is not executed!');
 
-								} else {
+						} else {
 
-									Users.findOne({username: username }, '_id' , function(err,user){
+							Users.findOne({username: username }, function(err,user){
+
+								if (err) {
+
+										throw err;
+
+									} else {
+										
+										user.comparePassword(password,function(err,isMatch) {
 
 											if (err) {
-
-												return err;
-
+											
+												throw err;
+											
 											} else {
 
-												req.session.userId = user._id;
-												res.redirect(200,'/');
+												if (isMatch == true) {
+
+													req.session.userId = user._id;
+													res.redirect('/');
+												
+												} else {
+
+													error.push('Username and password didn\'t match');
+												}
 
 											}
 
-									});
-							}
-							console.log(count);
+										});
 
-					});
+									}
+
+							});
+					}
+
+				});
 
 			}
 
-			res.render('login.ejs',{ title : title , error: error });	
+			res.render('login.ejs',{ title : title , error: error });
 
 	});
 
 	web.get('/logout',function( req,res ) {
 
-
+		req.session.destroy(function(e){ res.redirect('/login');});
 
 	});
 
@@ -93,11 +122,18 @@ module.exports = function (app, express) {
 
 	   .get(function(req,res){
 
-	   		var title = 'Signup';
-	   		var error = [];
-	   		var success = false;
+	   		if (req.session.userId == undefined) {
+		   		var title = 'Signup';
+		   		var error = [];
+		   		var success = false;
 
-	   		res.render('signup.ejs',{ title : title , error: error , success: success });
+		   		res.render('signup.ejs',{ title : title , error: error , success: success });
+	   		
+	   		} else {
+
+	   			res.redirect('/');
+
+	   		}
 
 	   })
 
@@ -112,7 +148,6 @@ module.exports = function (app, express) {
 	   		var username  = req.body.username;
 	   		var password  = req.body.password;
 	   		var rpassword = req.body.rpassword;
-	   		console.log(bookstall + ' ' + address + ' '  + username + ' ' + password + ' ' + rpassword);
 
 	   		if (!username || !password || !address || !bookstall || !rpassword) {
 
@@ -181,7 +216,8 @@ module.exports = function (app, express) {
 	   });
 
 
-	web.get('/book-list',function( req,res ){
+	web.get('/book-list',function( req,res ) {
+
 
 
 	});
