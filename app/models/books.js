@@ -5,8 +5,10 @@ var BooksSchema = new Schema ({
 
 		bookname: String,
 		bookkeeper: String,
-		writter: [String],
-		image: String
+		writter: String,
+		image: String,
+		keywords: String,
+		popular: Number
 
 });
 

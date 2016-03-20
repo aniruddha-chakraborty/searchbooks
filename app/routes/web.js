@@ -1,6 +1,8 @@
 var Users = require('./../models/users');
-var books = require('./../models/books');
-var ejs   = require('ejs');
+var Books = require('./../models/books');
+var ejs   = require('ejs')
+	path  = require('path'),
+	fs 	  = require('fs');
 
 module.exports = function (app, express) {
 
@@ -39,10 +41,11 @@ module.exports = function (app, express) {
 
 		})
 
-		.post(function( req,res ) {
+		.post(function( req,res,next ) {
 
 			var username = req.body.username;
 			var password = req.body.password;
+			var view 	 = 1;
 			
 			var title 	 = 'Login';
 			var error 	 = [];
@@ -81,20 +84,17 @@ module.exports = function (app, express) {
 											if (err) {
 											
 												throw err;
-											
-											} else {
 
+											}												
 												if (isMatch == true) {
 
 													req.session.userId = user._id;
 													res.redirect('/');
-												
+
 												} else {
 
 													error.push('Username and password didn\'t match');
 												}
-
-											}
 
 										});
 
@@ -106,8 +106,9 @@ module.exports = function (app, express) {
 				});
 
 			}
+						
+			// res.render('login.ejs',{ title : title , error: error });
 
-			res.render('login.ejs',{ title : title , error: error });
 
 	});
 
@@ -138,6 +139,8 @@ module.exports = function (app, express) {
 	   })
 
 	   .post(function(req,res){
+
+	   	 if (req.session.userId == undefined) {
 
 	   		var title = 'Signup';
 	   		var error = [];
@@ -172,7 +175,7 @@ module.exports = function (app, express) {
 			}
 
 
-				Users.count({ username:username },function(err,count){
+				Users.count({ username:username },function(err,count) {
 
 						if (count > 0) {
 
@@ -197,7 +200,6 @@ module.exports = function (app, express) {
 				users.save(function(err){
 
 						if (err) {
-							res.send(err);
 							error.push('There was a problem while saving..');
 							return;
 						}
@@ -212,6 +214,11 @@ module.exports = function (app, express) {
 
 			
 	   		res.render('signup.ejs',{ title : title , error: error , success: success });
+	   	
+	   	} else {
+
+	   		res.redirect('/login');
+	   	}
 
 	   });
 
@@ -222,10 +229,101 @@ module.exports = function (app, express) {
 
 	});
 
-	web.get('/add-books',function(req,res){
+
+	web.route('/add-books')
+
+		.get(function(req,res){
 
 
-	});
+				var title = 'Add books';
+				var error = [];
+				var success = false;
+
+				res.render('add_books.ejs',{ title: title , error: error , success: success});
+			
+				
+
+		})
+
+		.post(function(req,res) {
+
+				var title = 'Add books';
+				var error = [];
+				var success = false;
+
+
+				var bookname = req.body.bookname;
+				var writtersname = req.body.writtersname;
+				var keywords 	= req.body.keywords;
+				var temppath = req.files;
+				var targetPath	= path.resolve('./public/assets/images'+req.files);
+
+				console.log(temppath+'\n');
+
+				if (!bookname || !writtersname || !keywords || !req.files.image.name) {
+
+						error.push('Please fill all the fields!');
+
+				}
+
+				if (bookname.length < 3) {
+
+					error.push('Please enter correct book name');
+				}
+
+				if (keywords.length < 3 ) {
+
+					error.push('Please enter more keywords');
+
+				}
+
+
+				  if ((path.extname(req.files.image.name).toLowerCase() !== '.jpg') || (path.extname(req.files.image.name).toLowerCase() !== '.jpeg') || (path.extname(req.files.image.name).toLowerCase() !== '.png')) {
+
+				  	error.push('We only accept jpg , jpeg and png images');
+				  }
+
+				  if (error.length === 0) {
+
+				  	var books = Books({
+
+						bookname: bookname,
+						bookkeeper: username,
+						writter: password,
+						image: targetPath,
+						keywords: keywords,
+						popular: 0
+
+					});
+
+				  	books.save(function(err){
+
+						if (err) {
+							error.push('There was a problem while saving..');
+						}
+
+				  		fs.rename(temppath,targetPath,function(err) {
+
+				  				if (err) {
+
+				  					throw err;
+				  				
+				  				} else {
+
+				  					console.log("picture uploaded");
+				  				
+				  				}
+				  		});
+
+
+					});
+
+				 }
+
+				res.render('add_books.ejs',{ title: title , error: error , success: success});
+
+		});
+
 
 	web.get('/404',function( req,res ){
 

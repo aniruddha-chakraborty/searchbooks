@@ -18,6 +18,7 @@ app.set('view engine','ejs');
 app.use(cookieParser());
 app.use(expressSession({ secret: '123456' }));
 
+
 mongoose.connect(config.database,function(err) {
 
 	if (!err) {
