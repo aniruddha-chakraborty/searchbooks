@@ -222,14 +222,6 @@ module.exports = function (app, express) {
 
 	   });
 
-
-	web.get('/book-list',function( req,res ) {
-
-
-
-	});
-
-
 	web.route('/add-books')
 
 		.get(function(req,res){
@@ -324,6 +316,42 @@ module.exports = function (app, express) {
 
 		});
 
+
+	web.get('/book-list',function( req,res ) {
+
+
+			if (req.session.userId !== undefined) {
+				
+				var title = 'Book list';
+				var userId = req.session.userId;
+				var books;
+				
+				console.log(userId);
+
+				res.render('book_list.ejs',{ title:title });
+
+					Users.findOne({bookkeeper: userId }, function(err,book){
+
+						if (err) {
+							
+							throw err;
+						
+							} else {
+
+							console.log(books);
+						}
+
+					});
+
+					console.log(books);
+
+				} else {
+
+				res.redirect('/login');
+			}
+
+
+	});
 
 	web.get('/404',function( req,res ){
 
