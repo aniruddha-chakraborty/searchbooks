@@ -1,11 +1,11 @@
-var Users = require('./../models/users');
-var Books = require('./../models/books');
-var ejs   = require('ejs'),
-   	util = require("util"),
+var Users = require('./../models/users'),
+	Books = require('./../models/books'),
+	ejs   = require('ejs'),
 	path  = require('path'),
-	fs 	  = require('fs');
+	fs 	  = require('fs'),
+	multer = require('multer');
 
-module.exports = function (app, express) {
+module.exports = function (app, express , upload) {
 
 	var web = express.Router();
 
@@ -233,19 +233,35 @@ module.exports = function (app, express) {
 
 				res.render('add_books.ejs',{ title: title , error: error , success: success});
 			
-
 		})
 
-		.post(function(req,res) {
+		.post(function(req,res ,next) {
 
+			var upload = multer().single('image');
 		
 
-			/*
+				upload(req,res , function(err){
+
+						if (err) {
+
+							throw err;
+
+							} else {
+
+							console.log('Image is uploaded!');
+							//console.log(req);
+						}
+
+				});
+
 				var title = 'Add books';
 				var error = [];
 				var success = false;
 
+				res.render('add_books.ejs', { title: title , error: error , success: success});
 
+
+		/*
 				var bookname = req.body.bookname;
 				var writtersname = req.body.writtersname;
 				var keywords 	= req.body.keywords;
@@ -294,29 +310,17 @@ module.exports = function (app, express) {
 
 						if (err) {
 							error.push('There was a problem while saving..');
+						
+							} else {
+
+							
+
 						}
-
-				  		fs.rename(temppath,targetPath,function(err) {
-
-				  				if (err) {
-
-				  					throw err;
-				  				
-				  				} else {
-
-				  					console.log("picture uploaded");
-				  				
-				  				}
-				  		});
-
 
 					});
 
 				 }
-
-				res.render('add_books.ejs',{ title: title , error: error , success: success});
-
-			*/
+		*/
 
 		});
 

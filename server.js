@@ -5,9 +5,10 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	cookieParser = require('cookie-parser'),
 	expressSession = require('express-session'),
-	methodOverride = require('method-override');
+	methodOverride = require('method-override'),
+	upload		   = require('multer');
 
-var app = express();
+	var app = express();
 
 
 app.use(bodyParser.urlencoded({ extended:false }));
@@ -18,6 +19,7 @@ app.set('view engine','ejs');
 app.use(cookieParser());
 app.use(expressSession({ resave: true ,secret: '123456' , saveUninitialized: true}));
 
+//var upload = multer({ dest: './public/assets/assets/images' , inMemory: false });
 
 mongoose.connect(config.database,function(err) {
 
@@ -33,7 +35,7 @@ mongoose.connect(config.database,function(err) {
 });
 
 
-var web = require('./app/routes/web')(app,express);
+var web = require('./app/routes/web')(app,express,upload);
 var api = require('./app/routes/api')(app,express);
 
 app.use('/',web);
