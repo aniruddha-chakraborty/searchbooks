@@ -1,6 +1,7 @@
 var Users = require('./../models/users');
 var Books = require('./../models/books');
-var ejs   = require('ejs')
+var ejs   = require('ejs'),
+   	util = require("util"),
 	path  = require('path'),
 	fs 	  = require('fs');
 
@@ -224,8 +225,7 @@ module.exports = function (app, express) {
 
 	web.route('/add-books')
 
-		.get(function(req,res){
-
+		.get(function(req,res) {
 
 				var title = 'Add books';
 				var error = [];
@@ -233,12 +233,14 @@ module.exports = function (app, express) {
 
 				res.render('add_books.ejs',{ title: title , error: error , success: success});
 			
-				
 
 		})
 
 		.post(function(req,res) {
 
+		
+
+			/*
 				var title = 'Add books';
 				var error = [];
 				var success = false;
@@ -314,6 +316,8 @@ module.exports = function (app, express) {
 
 				res.render('add_books.ejs',{ title: title , error: error , success: success});
 
+			*/
+
 		});
 
 
@@ -338,12 +342,12 @@ module.exports = function (app, express) {
 						
 							} else {
 
-							console.log(books);
+							console.log(book);
 						}
 
 					});
 
-					console.log(books);
+					//console.log(books);
 
 				} else {
 

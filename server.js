@@ -10,13 +10,13 @@ var express = require('express'),
 var app = express();
 
 
-app.use(bodyParser.urlencoded({ extended:true }));
+app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
 app.use('/assets',express.static(__dirname + '/public/assets'));
 app.use(methodOverride());
 app.set('view engine','ejs');
 app.use(cookieParser());
-app.use(expressSession({ secret: '123456' }));
+app.use(expressSession({ resave: true ,secret: '123456' , saveUninitialized: true}));
 
 
 mongoose.connect(config.database,function(err) {
