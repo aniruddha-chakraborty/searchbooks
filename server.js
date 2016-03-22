@@ -19,7 +19,9 @@ app.use(methodOverride());
 app.set('view engine','ejs');
 app.use(cookieParser());
 app.use(expressSession({ resave: true ,secret: '123456' , saveUninitialized: true}));
-app.use('env','development');
+
+app.use(express.errorHandler());
+
 var multer = Multer({ dest: './public/assets/assets/images' , inMemory: false });
 
 mongoose.connect(config.database,function(err) {
