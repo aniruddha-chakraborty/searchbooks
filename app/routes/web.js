@@ -2,10 +2,9 @@ var Users = require('./../models/users'),
 	Books = require('./../models/books'),
 	ejs   = require('ejs'),
 	path  = require('path'),
-	fs 	  = require('fs'),
-	multer = require('multer');
+	fs 	  = require('fs');
 
-module.exports = function (app, express , upload) {
+module.exports = function (app, express, multer) {
 
 	var web = express.Router();
 
@@ -225,7 +224,7 @@ module.exports = function (app, express , upload) {
 
 	web.route('/add-books')
 
-		.get(function(req,res) {
+		.get(function(req, res) {
 
 				var title = 'Add books';
 				var error = [];
@@ -235,24 +234,24 @@ module.exports = function (app, express , upload) {
 			
 		})
 
-		.post(function(req,res ,next) {
+		.post(multer.single('image'), function(req, res, next) {
 
-			var upload = multer().single('image');
+			// var upload = multer().single('image');
 		
 
-				upload(req,res , function(err){
+			// 	upload(req,res , function(err){
 
-						if (err) {
+			// 			if (err) {
 
-							throw err;
+			// 				throw err;
 
-							} else {
+			// 				} else {
 
-							console.log('Image is uploaded!');
-							//console.log(req);
-						}
+			// 				console.log('Image is uploaded!');
+			// 				//console.log(req);
+			// 			}
 
-				});
+			// 	});
 
 				var title = 'Add books';
 				var error = [];
