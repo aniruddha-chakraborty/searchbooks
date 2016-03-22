@@ -6,7 +6,8 @@ var express = require('express'),
 	cookieParser = require('cookie-parser'),
 	expressSession = require('express-session'),
 	methodOverride = require('method-override'),
-	Multer		   = require('multer');
+	Multer		   = require('multer'),
+	Ejs 		   = require('ejs');
 
 	var app = express();
 
@@ -18,7 +19,7 @@ app.use(methodOverride());
 app.set('view engine','ejs');
 app.use(cookieParser());
 app.use(expressSession({ resave: true ,secret: '123456' , saveUninitialized: true}));
-
+app.use('env','development');
 var multer = Multer({ dest: './public/assets/assets/images' , inMemory: false });
 
 mongoose.connect(config.database,function(err) {
